@@ -38,7 +38,14 @@ A comprehensive sample retail database for Databricks, built to showcase **Unity
 
 ## Deployment
 
-### Option 1: Databricks CLI (recommended)
+### Option 1: Git Folder (recommended)
+
+1. In your Databricks workspace, click **Workspace** → **Create** → **Git folder**
+2. Paste the GitHub Repo URL into the Git repository URL box
+3. GitHub should autopopulate in the Git provider box
+4. Click Create Git folder
+
+### Option 2: Databricks CLI
 
 ```bash
 # Install CLI if needed
@@ -50,7 +57,7 @@ databricks workspace import-dir notebooks/ /Shared/northwind-analytics/ --overwr
 # Open the workspace and run 00_main from your browser
 ```
 
-### Option 2: Manual import
+### Option 3: Manual import
 
 1. In your Databricks workspace, click **Workspace** → **Import**
 2. Select **"Import from file"** and upload the entire `notebooks/` folder
