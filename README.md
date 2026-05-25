@@ -1,6 +1,6 @@
 # Northwind Analytics — Databricks Sample Database
 
-## Migrated from jaokeeffe-db to james-okeeffe_data on 17.4.2026
+## For use with the UC and Genie Workshop
 
 A comprehensive sample retail database for Databricks, built to showcase **Unity Catalog**, **Genie (AI/BI)**, **Delta Lake**, and **ML Model Registry** capabilities.
 
