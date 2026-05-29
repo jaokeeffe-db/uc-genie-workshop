@@ -29,7 +29,91 @@ Before the demo:
    - `agg_daily_sales` — fast aggregates for trend queries
    - `v_kpi_executive` *(added by notebook 08)* — single-row KPI summary
    - `metric_definitions` *(added by notebook 08)* — business metric glossary
-5. **Add the six Trusted Asset SQL** snippets from Section 3.6.
+5. **Add the six Example SQL query snippets below:
+
+
+```sql
+-- Trusted Asset 1: Revenue by period
+-- Intent: "revenue last quarter / this month / YTD"
+SELECT
+    year_quarter,
+    SUM(net_revenue)          AS total_revenue,
+    SUM(gross_revenue)        AS gross_revenue,
+    SUM(total_discounts)      AS total_discounts,
+    SUM(num_orders)           AS order_count
+FROM mart.v_sales_summary
+GROUP BY year_quarter
+ORDER BY year_quarter DESC;
+
+-- Trusted Asset 2: Store performance vs target
+-- Intent: "which stores are underperforming / top stores"
+SELECT
+    store_name,
+    region,
+    SUM(actual_revenue)       AS ytd_revenue,
+    MAX(annual_target)        AS annual_target,
+    SUM(actual_revenue) / MAX(annual_target) * 100  AS pct_of_annual_target,
+    SUM(revenue_vs_target)    AS total_variance
+FROM mart.v_store_performance
+WHERE year = (SELECT MAX(year) FROM mart.v_store_performance)
+GROUP BY store_name, region
+ORDER BY pct_of_annual_target ASC;
+
+-- Trusted Asset 3: Churn risk customers
+-- Intent: "customers at churn risk / who might churn"
+SELECT
+    customer_id,
+    first_name || ' ' || last_name AS customer_name,
+    loyalty_tier,
+    customer_segment,
+    lifetime_value,
+    days_since_last_order,
+    orders_last_90d,
+    preferred_category
+FROM mart.v_customer_360
+WHERE is_churn_risk = TRUE
+ORDER BY lifetime_value DESC;
+
+-- Trusted Asset 4: Top products by revenue
+-- Intent: "best selling products / top products this month"
+SELECT
+    product_name,
+    category,
+    sub_category,
+    SUM(units_sold)           AS units_sold,
+    SUM(revenue)              AS total_revenue,
+    AVG(gross_margin_pct)     AS avg_margin_pct,
+    SUM(return_count)         AS returns
+FROM mart.v_product_performance
+GROUP BY product_name, category, sub_category
+ORDER BY total_revenue DESC
+LIMIT 20;
+
+-- Trusted Asset 5: Return rate by category
+-- Intent: "return rates / which products get returned"
+SELECT
+    category,
+    sub_category,
+    SUM(units_sold)           AS units_sold,
+    SUM(return_quantity)      AS returns,
+    SUM(return_quantity) / NULLIF(SUM(units_sold), 0) * 100 AS return_rate_pct
+FROM mart.v_product_performance
+GROUP BY category, sub_category
+ORDER BY return_rate_pct DESC;
+
+-- Trusted Asset 6: Customer cohort retention
+-- Intent: "cohort retention / how long do customers stay"
+SELECT
+    cohort_month,
+    period_number,
+    AVG(retention_rate_pct)   AS avg_retention_pct,
+    SUM(cohort_revenue)       AS total_cohort_revenue
+FROM mart.v_cohort_analysis
+WHERE period_number <= 12
+GROUP BY cohort_month, period_number
+ORDER BY cohort_month, period_number;
+```
+
 6. **System instructions** (paste into the Genie Space instructions field):
 
 ```
